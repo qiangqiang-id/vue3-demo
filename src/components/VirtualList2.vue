@@ -52,6 +52,14 @@ const scrollTop = ref(0);
 const containerRef = ref();
 const visualAreaDisplayNumber = ref(0);
 
+onMounted(() => {
+  /** 计算可视区能够展示数据 */
+  const visualHeight = containerRef.value.offsetHeight;
+  visualAreaDisplayNumber.value = Math.ceil(
+    visualHeight / itemTotalHeight.value
+  );
+});
+
 /** 单项的总共高度 ，高度 + 间隔 */
 const itemTotalHeight = computed(() => {
   return props.itemHeight + props.spacingHeight;
@@ -62,20 +70,9 @@ const virtualHeight = computed(
   () => props.list.length * itemTotalHeight.value - props.spacingHeight
 );
 
-onMounted(() => {
-  /** 计算可视区能够展示数据 */
-  const visualHeight = containerRef.value.offsetHeight;
-  visualAreaDisplayNumber.value = Math.ceil(
-    visualHeight / itemTotalHeight.value
-  );
-});
-
 const endIndex = computed(() => {
   const index = startIndex.value + RESERVE_ITEM + visualAreaDisplayNumber.value;
-
-  return index + RESERVE_ITEM > props.list.length
-    ? props.list.length
-    : index + RESERVE_ITEM;
+  return Math.min(props.list.length, index + RESERVE_ITEM);
 });
 
 const realList = computed(() => {
@@ -84,7 +81,7 @@ const realList = computed(() => {
 
 watch(scrollTop, (val) => {
   const index = Math.floor(val / itemTotalHeight.value);
-  startIndex.value = index - RESERVE_ITEM < 0 ? 0 : index - RESERVE_ITEM;
+  startIndex.value = Math.max(0, index - RESERVE_ITEM);
 });
 
 function containerScroll(e: MouseEvent) {

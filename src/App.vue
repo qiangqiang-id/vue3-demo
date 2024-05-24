@@ -15,7 +15,7 @@ import list from "./mock";
       </template>
     </VirtualList> -->
 
-    <VirtualList2 :list="list" :itemHeight="80" :spacingHeight="10">
+    <VirtualList2 :list="list" :itemHeight="80" :spacingHeight="30">
       <template #list="{ item, index }">
         <div class="item" :key="item.tinyCheckDetailId">
           {{ index + "虚拟列表" }}
